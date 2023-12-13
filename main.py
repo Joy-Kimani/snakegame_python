@@ -1,6 +1,7 @@
 from tkinter import *
 import random
 
+#constants
 GAME_WIDTH = 700
 GAME_HEIGHT = 500
 SPEED = 100
@@ -11,7 +12,7 @@ FOOD_COLOR = "#FF7200"
 BACKGROUND_COLOR = "#000000"
 
 
-
+#create class for snake
 class Snake:
     
     def __init__(self):
@@ -26,7 +27,7 @@ class Snake:
             square = canvas.create_rectangle(x, y, x + SPACE_SIZE, y + SPACE_SIZE, fill=SNAKE_COLOR,tag="snake")
             self.squares.append(square)
 
-
+#create class for food
 class Food:
     
       def __init__(self):
@@ -37,7 +38,7 @@ class Food:
           self.coordinates = [x,y]
 
           canvas.create_oval(x,y, x + SPACE_SIZE, y + SPACE_SIZE, fill=FOOD_COLOR, tag="food")
-
+#define turn function, check coordinates, update coordinates
 def next_turn(snake, food):
 
     x, y = snake.coordinates[0]
@@ -76,17 +77,17 @@ def next_turn(snake, food):
         canvas.delete(snake.squares[-1])
 
         del snake.squares[-1]
-
+#check collisons that end game, schedule the next turn
     if check_collisions(snake):
         game_over()
 
     else:
         window.after(SPEED, next_turn, snake, food)
     
-
+#update the snake direction according to key presses
 def change_direction(new_direction):
 
-    global direction
+    global direction    #ensure that snake does not reverse its direction instantly
     
     if new_direction == 'left':
         if direction != 'right':
@@ -100,23 +101,26 @@ def change_direction(new_direction):
     elif new_direction == 'down':
         if direction != 'up':
             direction = new_direction
-    
 
+
+#check for collisions within walls and itself
 def check_collisions(snake):
     
-    x, y = snake.coordinates[0]
+    x, y = snake.coordinates[0]    #retrieves the head coordinates of the snake
 
     if x < 0 or x >= GAME_WIDTH:
         return True  
     elif y < 0 or y >= GAME_HEIGHT:
         return True
-    
+        
+    #check for collisions with snake body parts
     for body_part in snake.coordinates[1:]:
         if x == body_part[0] and y == body_part[1]:
             return True
         
     return False
-
+    
+#game over function
 def game_over():
     canvas.delete(ALL)
     canvas.create_text(canvas.winfo_width()/2, canvas.winfo_height()/2,
@@ -153,6 +157,7 @@ window.bind('<Right>', lambda event: change_direction('right'))
 window.bind('<Up>', lambda event: change_direction('up'))
 window.bind('<Down>', lambda event: change_direction('down'))
 
+#initialises main window
 snake = Snake()
 food = Food()
 
